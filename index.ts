@@ -6,10 +6,54 @@ const appDiv: HTMLElement = document.getElementById("app");
 appDiv.innerHTML = `<h1>TypeScript Starter</h1>`;
 
 var crelateJob = {
-  Priorities: "AA",
+  Priorities: null,
   "Argentina Referral Bonus Tier": "junior"
 };
 
+var CrelateTierBonus = [
+  {
+    id: "69b8848a-a789-49fa-9793-96334aabc97e",
+    companyId: "d0829b5c-c03d-45fc-9a0e-e58a3f0c75d3",
+    name: "Bonus Build 3",
+    archived: null,
+    tiers: [
+      {
+        amount: "1000",
+        recipientType: "employee",
+        payOutDays: "5",
+        userGroup: "3944e182-425e-11ea-b77f-2e728ce88125"
+      },
+      {
+        amount: "1000",
+        recipientType: "candidate",
+        payOutDays: "30",
+        userGroup: "3944e182-425e-11ea-b77f-2e728ce88125"
+      }
+    ],
+    __typename: "TieredBonus"
+  },
+  {
+    id: "69b8848a-a789-49fa-9793-96334aabc97e",
+    companyId: "d0829b5c-c03d-45fc-9a0e-e58a3f0c75d3",
+    name: "US Default",
+    archived: null,
+    tiers: [
+      {
+        amount: "1000",
+        recipientType: "employee",
+        payOutDays: "5",
+        userGroup: "3944e182-425e-11ea-b77f-2e728ce88125"
+      },
+      {
+        amount: "1000",
+        recipientType: "candidate",
+        payOutDays: "30",
+        userGroup: "3944e182-425e-11ea-b77f-2e728ce88125"
+      }
+    ],
+    __typename: "TieredBonus"
+  }
+];
 const prioritiesUS: Array<String> = ["AA", "AB", "AC"];
 const prioritiesArgentina: Array<String> = ["BAA", "BAB", "BAC"];
 const prioritiesIN: Array<String> = ["IA", "IB", "IC"];
@@ -46,18 +90,17 @@ compDTO["NWSdlrATSConfig"].ATSBonusBuilder = atsConfig[0].ATSBonusBuilder
   : null;
 
 let DefaultBonus = "";
-if (
-  crelateJob &&
-  !crelateJob["Priorities"] &&
-  (compDTO && compDTO["NWSdlrATSConfig"].cmp_defaultReferralBonusId)
-) {
+if (crelateJob && !crelateJob["Priorities"]) {
+  const bonus = CrelateTierBonus.filter(
+    e =>
+      e.name.toLowerCase().includes("us") &&
+      e.name.toLowerCase().includes("default")
+  )[0];
   DefaultBonus = JSON.stringify({
     hasBonus: true,
-    tieredBonusId:
-      compDTO && compDTO["NWSdlrATSConfig"].cmp_defaultReferralBonusId
-        ? compDTO["NWSdlrATSConfig"].cmp_defaultReferralBonusId
-        : null
+    tieredBonusId: bonus ? bonus.id : null
   });
+  
 } else if (
   crelateJob &&
   crelateJob["Priorities"] &&
@@ -79,5 +122,4 @@ if (
         : null
   });
 }
-
 console.log("heree", DefaultBonus);
