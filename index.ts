@@ -57,6 +57,9 @@ var CrelateTierBonus = [
 const prioritiesUS: Array<String> = ["AA", "AB", "AC"];
 const prioritiesArgentina: Array<String> = ["BAA", "BAB", "BAC"];
 const prioritiesIN: Array<String> = ["IA", "IB", "IC"];
+const tags = {
+  Default: []
+};
 
 const atsConfig = [
   {
@@ -90,7 +93,68 @@ compDTO["NWSdlrATSConfig"].ATSBonusBuilder = atsConfig[0].ATSBonusBuilder
   : null;
 
 let DefaultBonus = "";
-if (crelateJob && !crelateJob["Priorities"]) {
+if (
+  crelateJob &&
+  crelateJob["Priorities"] &&
+  prioritiesUS.includes(crelateJob["Priorities"]) &&
+  (compDTO && compDTO['NWSdlrATSConfig'].cmp_defaultReferralAmount)
+) {
+  if (tags.Default.length < 2) {
+    var bonusType = tags.Default[0].toLowerCase();
+    const bonus = CrelateTierBonus.filter(
+      e =>
+        e.name.toLowerCase().includes("argentina") &&
+        e.name.toLowerCase().includes("us") &&
+        e.name.toLowerCase().includes(bonusType)
+    )[0];
+    DefaultBonus = JSON.stringify({
+      hasBonus: true,
+      tieredBonusId: bonus ? bonus.id : null
+    });
+  } else {
+    DefaultBonus = JSON.stringify({
+      hasBonus: true,
+      tieredBonusId: 0
+    });
+  }
+} else if (
+  crelateJob &&
+  crelateJob["Priorities"] &&
+  prioritiesArgentina.includes(crelateJob["Priorities"]) &&
+  (compDTO && compDTO['NWSdlrATSConfig'].cmp_defaultReferralAmount)
+) {
+  if (tags.Default.length < 2) {
+    var bonusType = tags.Default[0].toLowerCase();
+    const bonus = CrelateTierBonus.filter(
+      e =>
+        e.name.toLowerCase().includes("argentina") &&
+        !e.name.toLowerCase().includes("us") &&
+        e.name.toLowerCase().includes(bonusType)
+    )[0];
+    DefaultBonus = JSON.stringify({
+      hasBonus: true,
+      tieredBonusId: bonus ? bonus.id : null
+    });
+  } else {
+    DefaultBonus = JSON.stringify({
+      hasBonus: true,
+      tieredBonusId: 0
+    });
+  }
+} else if (
+  crelateJob &&
+  crelateJob["Priorities"] &&
+  prioritiesIN.includes(crelateJob["Priorities"]) &&
+  (compDTO && compDTO['NWSdlrATSConfig'].cmp_defaultReferralAmount)
+) {
+  const bonus = CrelateTierBonus.filter(e =>
+    e.name.toLowerCase().includes("india")
+  )[0];
+  DefaultBonus = JSON.stringify({
+    hasBonus: true,
+    tieredBonusId: bonus ? bonus.id : null
+  });
+} else if((compDTO && compDTO['NWSdlrATSConfig'].cmp_defaultReferralAmount)){
   const bonus = CrelateTierBonus.filter(
     e =>
       e.name.toLowerCase().includes("us") &&
@@ -100,26 +164,6 @@ if (crelateJob && !crelateJob["Priorities"]) {
     hasBonus: true,
     tieredBonusId: bonus ? bonus.id : null
   });
-  
-} else if (
-  crelateJob &&
-  crelateJob["Priorities"] &&
-  prioritiesUS.includes(crelateJob["Priorities"]) &&
-  (compDTO &&
-    compDTO["NWSdlrATSConfig"].cmp_defaultReferralBonusId &&
-    compDTO["NWSdlrATSConfig"].ATSBonusBuilder.name
-      .toLowerCase()
-      .includes("us") &&
-    compDTO["NWSdlrATSConfig"].ATSBonusBuilder.name.toLowerCase.includes(
-      crelateJob["Argentina Referral Bonus Tier"].toLowerCase()
-    ))
-) {
-  DefaultBonus = JSON.stringify({
-    hasBonus: true,
-    tieredBonusId:
-      compDTO && compDTO["NWSdlrATSConfig"].cmp_defaultReferralBonusId
-        ? compDTO["NWSdlrATSConfig"].cmp_defaultReferralBonusId
-        : null
-  });
 }
+
 console.log("heree", DefaultBonus);
