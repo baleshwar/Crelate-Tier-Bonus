@@ -154,6 +154,23 @@ if (
     hasBonus: true,
     tieredBonusId: bonus ? bonus.id : null
   });
+} else if (
+  !crelateJob["Priorities"] ||
+  !(prioritiesUS.includes(
+    crelateJob["Priorities"] ||
+    prioritiesArgentina.includes(crelateJob["Priorities"]) ||
+    prioritiesIN.includes(crelateJob["Priorities"])
+  ))
+) {
+  const bonus = CrelateTierBonus.filter(
+    e =>
+      e.name.toLowerCase().includes("us") &&
+      e.name.toLowerCase().includes("default")
+  )[0];
+  DefaultBonus = JSON.stringify({
+    hasBonus: true,
+    tieredBonusId: bonus ? bonus.id : null
+  });
 } else if (compDTO && compDTO["NWSdlrATSConfig"].cmp_defaultReferralBonusId) {
   DefaultBonus = JSON.stringify({
     hasBonus: true,
