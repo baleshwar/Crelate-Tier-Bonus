@@ -97,7 +97,7 @@ if (
   crelateJob &&
   crelateJob["Priorities"] &&
   prioritiesUS.includes(crelateJob["Priorities"]) &&
-  (compDTO && compDTO['NWSdlrATSConfig'].cmp_defaultReferralAmount)
+  (compDTO && compDTO["NWSdlrATSConfig"].cmp_defaultReferralBonusId)
 ) {
   if (tags.Default.length < 2) {
     var bonusType = tags.Default[0].toLowerCase();
@@ -121,7 +121,7 @@ if (
   crelateJob &&
   crelateJob["Priorities"] &&
   prioritiesArgentina.includes(crelateJob["Priorities"]) &&
-  (compDTO && compDTO['NWSdlrATSConfig'].cmp_defaultReferralAmount)
+  (compDTO && compDTO["NWSdlrATSConfig"].cmp_defaultReferralBonusId)
 ) {
   if (tags.Default.length < 2) {
     var bonusType = tags.Default[0].toLowerCase();
@@ -145,7 +145,7 @@ if (
   crelateJob &&
   crelateJob["Priorities"] &&
   prioritiesIN.includes(crelateJob["Priorities"]) &&
-  (compDTO && compDTO['NWSdlrATSConfig'].cmp_defaultReferralAmount)
+  (compDTO && compDTO["NWSdlrATSConfig"].cmp_defaultReferralBonusId)
 ) {
   const bonus = CrelateTierBonus.filter(e =>
     e.name.toLowerCase().includes("india")
@@ -154,15 +154,21 @@ if (
     hasBonus: true,
     tieredBonusId: bonus ? bonus.id : null
   });
-} else if((compDTO && compDTO['NWSdlrATSConfig'].cmp_defaultReferralAmount)){
-  const bonus = CrelateTierBonus.filter(
-    e =>
-      e.name.toLowerCase().includes("us") &&
-      e.name.toLowerCase().includes("default")
-  )[0];
+} else if (compDTO && compDTO["NWSdlrATSConfig"].cmp_defaultReferralBonusId) {
   DefaultBonus = JSON.stringify({
     hasBonus: true,
-    tieredBonusId: bonus ? bonus.id : null
+    tieredBonusId:
+      compDTO && compDTO["NWSdlrATSConfig"].cmp_defaultReferralBonusId
+        ? compDTO["NWSdlrATSConfig"].cmp_defaultReferralBonusId
+        : null
+  });
+} else if (compDTO && compDTO["NWSdlrATSConfig"].cmp_defaultReferralAmount) {
+  DefaultBonus = JSON.stringify({
+    hasBonus: true,
+    amount:
+      compDTO && compDTO["NWSdlrATSConfig"].cmp_defaultReferralAmount
+        ? compDTO["NWSdlrATSConfig"].cmp_defaultReferralAmount
+        : null
   });
 }
 
