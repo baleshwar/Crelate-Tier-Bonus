@@ -6,59 +6,44 @@ const appDiv: HTMLElement = document.getElementById("app");
 appDiv.innerHTML = `<h1>TypeScript Starter</h1>`;
 
 var crelateJob = {
-  Priorities: null,
+  Priorities: "A",
   "Argentina Referral Bonus Tier": "junior"
 };
 
 var CrelateTierBonus = [
   {
-    id: "69b8848a-a789-49fa-9793-96334aabc97e",
-    companyId: "d0829b5c-c03d-45fc-9a0e-e58a3f0c75d3",
-    name: "Bonus Build 3",
-    archived: null,
+    companyId: "95790c4b-8cd6-4f86-aba2-e02f113ae4f7",
+    id: "066fe203-6c39-481c-9b3f-29ee0825c6b5",
+    name: "Argentina-Argentina Junior",
     tiers: [
       {
-        amount: "1000",
+        amount: 750,
+        payOutDays: 30,
         recipientType: "employee",
-        payOutDays: "5",
-        userGroup: "3944e182-425e-11ea-b77f-2e728ce88125"
-      },
-      {
-        amount: "1000",
-        recipientType: "candidate",
-        payOutDays: "30",
-        userGroup: "3944e182-425e-11ea-b77f-2e728ce88125"
+        userGroup: "52c14d5d-6a25-4401-a238-2e0369ecdd9c"
       }
-    ],
-    __typename: "TieredBonus"
+    ]
   },
   {
-    id: "69b8848a-a789-49fa-9793-96334aabc97e",
-    companyId: "d0829b5c-c03d-45fc-9a0e-e58a3f0c75d3",
-    name: "US Default",
-    archived: null,
+    companyId: "95790c4b-8cd6-4f86-aba2-e02f113ae4f7",
+    id: "160108da-4866-427a-9b25-f69eb4d74081",
+    name: "US Standard",
     tiers: [
       {
-        amount: "1000",
+        amount: 3000,
+        payOutDays: 90,
         recipientType: "employee",
-        payOutDays: "5",
-        userGroup: "3944e182-425e-11ea-b77f-2e728ce88125"
-      },
-      {
-        amount: "1000",
-        recipientType: "candidate",
-        payOutDays: "30",
-        userGroup: "3944e182-425e-11ea-b77f-2e728ce88125"
+        userGroup: "52c14d5d-6a25-4401-a238-2e0369ecdd9c"
       }
-    ],
-    __typename: "TieredBonus"
+    ]
   }
 ];
 const prioritiesUS: Array<String> = ["AA", "AB", "AC"];
 const prioritiesArgentina: Array<String> = ["BAA", "BAB", "BAC"];
 const prioritiesIN: Array<String> = ["IA", "IB", "IC"];
 const tags = {
-  Default: []
+  Default: [],
+  "Argentina Referral Bonus Tier ": ["Argentina Junior "]
 };
 
 const atsConfig = [
@@ -93,14 +78,24 @@ compDTO["NWSdlrATSConfig"].ATSBonusBuilder = atsConfig[0].ATSBonusBuilder
   : null;
 
 let DefaultBonus = "";
+/**
+ * Bonus setting for Argentina-US
+ */
 if (
   crelateJob &&
   crelateJob["Priorities"] &&
   prioritiesUS.includes(crelateJob["Priorities"]) &&
   (compDTO && compDTO["NWSdlrATSConfig"].cmp_defaultReferralBonusId)
 ) {
-  if (tags.Default.length < 2) {
-    var bonusType = tags.Default[0].toLowerCase();
+  console.log("Argentina-US");
+  /**
+   * Bonus setting for Junior/Senior
+   */
+  if (tags["Argentina Referral Bonus Tier "].length < 2) {
+    var bonusType = tags["Argentina Referral Bonus Tier "][0]
+      .toLowerCase()
+      .trim();
+    console.log("bonusType====>", bonusType);
     const bonus = CrelateTierBonus.filter(
       e =>
         e.name.toLowerCase().includes("argentina") &&
@@ -118,13 +113,23 @@ if (
     });
   }
 } else if (
+  /**
+   * Bonus setting for Argentina-Argentina
+   */
   crelateJob &&
   crelateJob["Priorities"] &&
   prioritiesArgentina.includes(crelateJob["Priorities"]) &&
   (compDTO && compDTO["NWSdlrATSConfig"].cmp_defaultReferralBonusId)
 ) {
-  if (tags.Default.length < 2) {
-    var bonusType = tags.Default[0].toLowerCase();
+  console.log("Argentina-Argentina");
+  /**
+   * Bonus setting for Junior/Senior
+   */
+  if (tags["Argentina Referral Bonus Tier "].length < 2) {
+    var bonusType = tags["Argentina Referral Bonus Tier "][0]
+      .toLowerCase()
+      .trim();
+    console.log("bonusType====>", bonusType);
     const bonus = CrelateTierBonus.filter(
       e =>
         e.name.toLowerCase().includes("argentina") &&
@@ -142,11 +147,15 @@ if (
     });
   }
 } else if (
+  /**
+   * Bonus setting for India
+   */
   crelateJob &&
   crelateJob["Priorities"] &&
   prioritiesIN.includes(crelateJob["Priorities"]) &&
   (compDTO && compDTO["NWSdlrATSConfig"].cmp_defaultReferralBonusId)
 ) {
+  console.log("India");
   const bonus = CrelateTierBonus.filter(e =>
     e.name.toLowerCase().includes("india")
   )[0];
@@ -155,23 +164,30 @@ if (
     tieredBonusId: bonus ? bonus.id : null
   });
 } else if (
+  /**
+   * Bonus setting for US default
+   */
   !crelateJob["Priorities"] ||
-  !(prioritiesUS.includes(
-    crelateJob["Priorities"] ||
+  !(
+    prioritiesUS.includes(crelateJob["Priorities"]) ||
     prioritiesArgentina.includes(crelateJob["Priorities"]) ||
     prioritiesIN.includes(crelateJob["Priorities"])
-  ))
+  )
 ) {
+  console.log("US Default");
   const bonus = CrelateTierBonus.filter(
     e =>
       e.name.toLowerCase().includes("us") &&
-      e.name.toLowerCase().includes("default")
+      e.name.toLowerCase().includes("standard")
   )[0];
   DefaultBonus = JSON.stringify({
     hasBonus: true,
     tieredBonusId: bonus ? bonus.id : null
   });
 } else if (compDTO && compDTO["NWSdlrATSConfig"].cmp_defaultReferralBonusId) {
+  /**
+   * Bonus setting for ATS
+   */
   DefaultBonus = JSON.stringify({
     hasBonus: true,
     tieredBonusId:
@@ -180,6 +196,9 @@ if (
         : null
   });
 } else if (compDTO && compDTO["NWSdlrATSConfig"].cmp_defaultReferralAmount) {
+  /**
+   * Bonus setting from Amount
+   */
   DefaultBonus = JSON.stringify({
     hasBonus: true,
     amount:
@@ -188,5 +207,4 @@ if (
         : null
   });
 }
-
-console.log("heree", DefaultBonus);
+console.log("Bonus>>>", DefaultBonus);
